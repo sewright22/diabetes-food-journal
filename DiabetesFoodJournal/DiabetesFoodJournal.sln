@@ -8,7 +8,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TestTextFile.txt = TestTextFile.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{FC6B9450-7964-48AD-9C0F-560332E702FE}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC6B9450-7964-48AD-9C0F-560332E702FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC6B9450-7964-48AD-9C0F-560332E702FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC6B9450-7964-48AD-9C0F-560332E702FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC6B9450-7964-48AD-9C0F-560332E702FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
