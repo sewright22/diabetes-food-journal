@@ -1,13 +1,17 @@
-﻿namespace WebApi.Features.UserLogin
+﻿using Services;
+
+namespace WebApi.Features.UserLogin
 {
     public class UserLoginEndpoint : Endpoint<LoginRequest, UserLoginResponse>
     {
-        public UserLoginEndpoint(IConfiguration configuration)
+        public UserLoginEndpoint(IConfiguration configuration, IUserService userService)
         {
             this.Configuration = configuration;
+            this.UserService = userService;
         }
 
         public IConfiguration Configuration { get; }
+        public IUserService UserService { get; }
 
         public override void Configure()
         {
@@ -46,16 +50,18 @@
         //    }
         //}
 
-        public override Task<UserLoginResponse> ExecuteAsync(LoginRequest req, CancellationToken ct)
+        public override async Task<UserLoginResponse> ExecuteAsync(LoginRequest req, CancellationToken ct)
         {
             if (this.Configuration is null)
             {
                 throw new ArgumentNullException(nameof(this.Config));
             }
 
+            
+
             // TODO: Inject IUthenticationService once business layer is setup.
             // if (await authService.CredentialsAreValid(req.Username, req.Password, ct))
-            if (req.Username.Contains("test") && req.Password.Contains("test"))
+            if (await this.UserService.ValidateCredentials(req.Username, req.Password).ConfigureAwait(false))
             {
                 var jwtToken = JWTBearer.CreateToken(
                       signingKey: this.Configuration["Security:TokenSigningKey"],
@@ -64,11 +70,11 @@
                       roles: new[] { "Admin", "Management" },
                       permissions: new[] { "ManageInventory", "ManageUsers" });
 
-                return Task.FromResult(new UserLoginResponse
+                return new UserLoginResponse
                 {
                     Username = req.Username,
                     Token = jwtToken
-                });
+                };
             }
             else
             {

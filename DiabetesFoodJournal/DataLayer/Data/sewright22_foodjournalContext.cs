@@ -207,6 +207,8 @@ namespace DataLayer.Data
                 entity.Property(e => e.PasswordId).HasColumnType("int(11)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
+
+                entity.HasOne(x => x.User).WithOne(x=>x.Userpassword);
             });
 
             OnModelCreatingPartial(modelBuilder);

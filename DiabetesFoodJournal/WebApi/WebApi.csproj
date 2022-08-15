@@ -13,4 +13,9 @@
     <PackageReference Include="FastEndpoints.Security" Version="4.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Services.EfCore\Services.EfCore.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
 </Project>

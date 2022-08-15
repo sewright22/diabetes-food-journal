@@ -7,5 +7,7 @@ namespace DataLayer.Data
     {
         public int Id { get; set; }
         public string? Email { get; set; }
+
+        public virtual Userpassword? Userpassword { get; set; }
     }
 }
