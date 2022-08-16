@@ -1,7 +1,6 @@
 ﻿global using FastEndpoints;
 global using FastEndpoints.Security;
 using DataLayer.Data;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

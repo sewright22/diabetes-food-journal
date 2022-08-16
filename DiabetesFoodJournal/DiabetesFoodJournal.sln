@@ -12,11 +12,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{0FDCBE4A-F5B4-451D-BA41-E24457A5506A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Tests.UnitTests", "WebApi.Tests.UnitTests\WebApi.Tests.UnitTests.csproj", "{F1085242-DCFA-4261-8FF8-188356437A8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Tests.UnitTests", "WebApi.Tests.UnitTests\WebApi.Tests.UnitTests.csproj", "{F1085242-DCFA-4261-8FF8-188356437A8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{4A7E931F-3CF3-4470-BD02-852CB898E912}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{4A7E931F-3CF3-4470-BD02-852CB898E912}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.EfCore", "Services.EfCore\Services.EfCore.csproj", "{77569E45-44FF-4673-8427-82BE81F14C6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.EfCore", "Services.EfCore\Services.EfCore.csproj", "{77569E45-44FF-4673-8427-82BE81F14C6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.EfCore.Tests.UnitTests", "Services.EfCore.Tests.UnitTests\Services.EfCore.Tests.UnitTests.csproj", "{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{77569E45-44FF-4673-8427-82BE81F14C6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77569E45-44FF-4673-8427-82BE81F14C6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77569E45-44FF-4673-8427-82BE81F14C6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

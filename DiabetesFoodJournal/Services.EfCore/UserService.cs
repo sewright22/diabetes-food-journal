@@ -20,9 +20,44 @@ namespace Services.EfCore
         public sewright22_foodjournalContext DbContext { get; }
         public IPasswordHasher<User> PasswordHasher { get; }
 
+        public async Task<User> AddUser(string userName, string password)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                throw new ArgumentNullException(nameof(userName));
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            if (this.DbContext.Users.Any(x => x.Email == userName))
+            {
+                throw new ArgumentException("User already exists!");
+            }
+
+            var userToAdd = new User
+            {
+                Email = userName,
+            };
+
+            userToAdd.Userpassword = new Userpassword
+            {
+                Password = new Password
+                {
+                    Text = this.PasswordHasher.HashPassword(userToAdd, password),
+                },
+            };
+
+            this.DbContext.Add(userToAdd);
+            await this.DbContext.SaveChangesAsync().ConfigureAwait(false);
+            return userToAdd;
+        }
+
         public async Task<bool> ValidateCredentials(string userName, string password)
         {
-            var user = await this.DbContext.Users.Include(x=>x.Userpassword).ThenInclude(x=>x.Password)
+            var user = await this.DbContext.Users.Include(x => x.Userpassword).ThenInclude(x => x.Password)
                 .SingleOrDefaultAsync(x => x.Email == userName).ConfigureAwait(false);
 
             if (user == null)
