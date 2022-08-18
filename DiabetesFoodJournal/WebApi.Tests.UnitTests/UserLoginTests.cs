@@ -4,7 +4,10 @@ using FastEndpoints;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Services;
 using WebApi.Features.UserLogin;
+using FluentAssertions;
+using FluentAssertions.Common;
 
 namespace WebApi.Tests.UnitTests
 {
@@ -18,15 +21,18 @@ namespace WebApi.Tests.UnitTests
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
             var mockConfig = fixture.Freeze<Mock<IConfiguration>>();
             var mockLogger = fixture.Freeze<Mock<ILogger<UserLoginEndpoint>>>();
+            var mockUserService = fixture.Freeze<Mock<IUserService>>();
             mockConfig.Setup(x => x["Security:TokenSigningKey"]).Returns("0000000000000000");
 
-            var endpoint = Factory.Create<UserLoginEndpoint>(mockConfig.Object);
+            var endpoint = Factory.Create<UserLoginEndpoint>(mockConfig.Object, mockUserService.Object);
 
             var req = new LoginRequest
             {
                 Username = "test",
                 Password = "test"
             };
+
+            mockUserService.Setup(x => x.ValidateCredentials(req.Username, req.Password)).ReturnsAsync(true);
 
             // Act
             var response = await endpoint.ExecuteAsync(req, default);
@@ -38,15 +44,16 @@ namespace WebApi.Tests.UnitTests
         }
 
         [TestMethod]
-        public void LoginFailure()
+        public async Task LoginFailure()
         {
             // Arrange
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
             var mockConfig = fixture.Freeze<Mock<IConfiguration>>();
             var mockLogger = fixture.Freeze<Mock<ILogger<UserLoginEndpoint>>>();
+            var mockUserService = fixture.Freeze<Mock<IUserService>>();
             mockConfig.Setup(x => x["Security:TokenSigningKey"]).Returns("0000000000000000");
 
-            var endpoint = Factory.Create<UserLoginEndpoint>(mockConfig.Object);
+            var endpoint = Factory.Create<UserLoginEndpoint>(mockConfig.Object, mockUserService.Object);
 
             var req = new LoginRequest
             {
@@ -54,8 +61,12 @@ namespace WebApi.Tests.UnitTests
                 Password = "test"
             };
 
+            mockUserService.Setup(x => x.ValidateCredentials(req.Username, req.Password)).ReturnsAsync(false);
+
             // Act
-            Assert.ThrowsException<ValidationFailureException>(() => endpoint.ExecuteAsync(req, default));
+            var actual = async () => await endpoint.ExecuteAsync(req, default).ConfigureAwait(false);
+
+            await actual.Should().ThrowAsync<ValidationFailureException>();
         }
     }
 }

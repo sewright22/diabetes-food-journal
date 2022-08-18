@@ -67,7 +67,12 @@ namespace Services.EfCore
 
             var passwordVerificationResult = this.PasswordHasher.VerifyHashedPassword(user, user.Userpassword.Password.Text, password);
 
-            return passwordVerificationResult.HasFlag(PasswordVerificationResult.Success);
+            if (passwordVerificationResult.HasFlag(PasswordVerificationResult.SuccessRehashNeeded))
+            {
+                this.PasswordHasher.HashPassword(user, password);
+            }
+
+            return passwordVerificationResult.HasFlag(PasswordVerificationResult.Success) || passwordVerificationResult.HasFlag(PasswordVerificationResult.SuccessRehashNeeded);
         }
     }
 }

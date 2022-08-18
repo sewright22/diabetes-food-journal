@@ -71,5 +71,116 @@ namespace Services.EfCore.Tests.UnitTests
             var addUserAction = async () => { await userService.AddUser("username", null!).ConfigureAwait(false); };
             await addUserAction.Should().ThrowAsync<ArgumentNullException>().WithParameterName("password").ConfigureAwait(false);
         }
+
+        [TestMethod]
+        public async Task ValidCredentialsTest()
+        {
+            var fixture = new Fixture()
+                .Customize(new InMemoryCustomization())
+                .Customize(new AutoMoqCustomization());
+
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            var dbContext = fixture.Freeze<sewright22_foodjournalContext>();
+            var mockHasher = fixture.Freeze<Mock<IPasswordHasher<User>>>();
+            var email = "test@test.com";
+            var passwordHash = "ASDFJKIASNDFIKASLEDF";
+            var password = "password";
+
+            var user = fixture.Build<User>()
+                .With(x=>x.Email, email)
+                .With(x => x.Userpassword, fixture.Build<Userpassword>()
+                .With(x => x.Password, fixture.Build<Password>()
+                .With(x => x.Text, passwordHash)
+                .Create())
+                .Create()).Create();
+
+            dbContext.Add(user);
+            dbContext.SaveChanges();
+
+            mockHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<User>(), passwordHash, "password")).Returns(PasswordVerificationResult.Success);
+
+            var userService = fixture.Create<UserService>();
+
+            var actual = await userService.ValidateCredentials(email, password).ConfigureAwait(false);
+
+            actual.Should().BeTrue();
+            mockHasher.Verify(x => x.HashPassword(It.IsAny<User>(), password), Times.Never);
+        }
+
+
+
+        [TestMethod]
+        public async Task InvalidCredentialsTest()
+        {
+            var fixture = new Fixture()
+                .Customize(new InMemoryCustomization())
+                .Customize(new AutoMoqCustomization());
+
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            var dbContext = fixture.Freeze<sewright22_foodjournalContext>();
+            var mockHasher = fixture.Freeze<Mock<IPasswordHasher<User>>>();
+            var email = "test@test.com";
+            var passwordHash = "ASDFJKIASNDFIKASLEDF";
+            var password = "password";
+
+            var user = fixture.Build<User>()
+                .With(x => x.Email, email)
+                .With(x => x.Userpassword, fixture.Build<Userpassword>()
+                .With(x => x.Password, fixture.Build<Password>()
+                .With(x => x.Text, passwordHash)
+                .Create())
+                .Create()).Create();
+
+            dbContext.Add(user);
+            dbContext.SaveChanges();
+
+            mockHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<User>(), passwordHash, "password")).Returns(PasswordVerificationResult.Failed);
+
+            var userService = fixture.Create<UserService>();
+
+            var actual = await userService.ValidateCredentials(email, password).ConfigureAwait(false);
+
+            actual.Should().BeFalse();
+            mockHasher.Verify(x => x.HashPassword(It.IsAny<User>(), password), Times.Never);
+        }
+
+        [TestMethod]
+        public async Task RehashNeededTest()
+        {
+            var fixture = new Fixture()
+                .Customize(new InMemoryCustomization())
+                .Customize(new AutoMoqCustomization());
+
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            var dbContext = fixture.Freeze<sewright22_foodjournalContext>();
+            var mockHasher = fixture.Freeze<Mock<IPasswordHasher<User>>>();
+            var email = "test@test.com";
+            var passwordHash = "ASDFJKIASNDFIKASLEDF";
+            var password = "password";
+
+            var user = fixture.Build<User>()
+                .With(x => x.Email, email)
+                .With(x => x.Userpassword, fixture.Build<Userpassword>()
+                .With(x => x.Password, fixture.Build<Password>()
+                .With(x => x.Text, passwordHash)
+                .Create())
+                .Create()).Create();
+
+            dbContext.Add(user);
+            dbContext.SaveChanges();
+
+            mockHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<User>(), passwordHash, "password")).Returns(PasswordVerificationResult.SuccessRehashNeeded);
+
+            var userService = fixture.Create<UserService>();
+
+            var actual = await userService.ValidateCredentials(email, password).ConfigureAwait(false);
+
+            actual.Should().BeTrue();
+
+            mockHasher.Verify(x => x.HashPassword(It.IsAny<User>(), password), Times.Once);
+        }
     }
 }
