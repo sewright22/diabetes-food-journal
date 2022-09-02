@@ -1,3 +1,4 @@
+using System.Data;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using DataLayer.Data;
@@ -75,6 +76,7 @@ namespace Services.EfCore.Tests.UnitTests
         [TestMethod]
         public async Task ValidCredentialsTest()
         {
+            // Arrange
             var fixture = new Fixture()
                 .Customize(new InMemoryCustomization())
                 .Customize(new AutoMoqCustomization());
@@ -100,15 +102,15 @@ namespace Services.EfCore.Tests.UnitTests
 
             mockHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<User>(), passwordHash, "password")).Returns(PasswordVerificationResult.Success);
 
+            // Act
             var userService = fixture.Create<UserService>();
 
-            var actual = await userService.ValidateCredentials(email, password).ConfigureAwait(false);
+            var actualResult = await userService.ValidateCredentials(email, password).ConfigureAwait(false);
 
-            actual.Should().BeTrue();
+            // Assert
+            actualResult.Should().BeTrue();
             mockHasher.Verify(x => x.HashPassword(It.IsAny<User>(), password), Times.Never);
         }
-
-
 
         [TestMethod]
         public async Task InvalidCredentialsTest()
@@ -181,6 +183,52 @@ namespace Services.EfCore.Tests.UnitTests
             actual.Should().BeTrue();
 
             mockHasher.Verify(x => x.HashPassword(It.IsAny<User>(), password), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task ErrorThrownWhenMoreThanOneUserIsFoundInDatabase()
+        {
+            // Arrange
+            var fixture = new Fixture()
+                .Customize(new InMemoryCustomization())
+                .Customize(new AutoMoqCustomization());
+
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            var dbContext = fixture.Freeze<sewright22_foodjournalContext>();
+            var mockHasher = fixture.Freeze<Mock<IPasswordHasher<User>>>();
+            var email = "test@test.com";
+            var passwordHash = "ASDFJKIASNDFIKASLEDF";
+            var password = "password";
+
+            var user = fixture.Build<User>()
+                .With(x => x.Email, email)
+                .With(x => x.Userpassword, fixture.Build<Userpassword>()
+                .With(x => x.Password, fixture.Build<Password>()
+                .With(x => x.Text, passwordHash)
+                .Create())
+                .Create()).Create();
+
+            var user2 = fixture.Build<User>()
+                .With(x => x.Email, email)
+                .With(x => x.Userpassword, fixture.Build<Userpassword>()
+                .With(x => x.Password, fixture.Build<Password>()
+                .With(x => x.Text, passwordHash)
+                .Create())
+                .Create()).Create();
+
+            dbContext.Add(user);
+            dbContext.Add(user2);
+            dbContext.SaveChanges();
+
+            mockHasher.Setup(x => x.VerifyHashedPassword(It.IsAny<User>(), passwordHash, "password")).Returns(PasswordVerificationResult.Success);
+
+            // Act
+            var userService = fixture.Create<UserService>();
+
+            var func = async () => await userService.ValidateCredentials(email, password).ConfigureAwait(false);
+
+            await func.Should().ThrowAsync<DuplicateNameException>().ConfigureAwait(false);
         }
     }
 }

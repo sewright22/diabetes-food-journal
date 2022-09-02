@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.EfCore", "Services.EfCore\Services.EfCore.csproj", "{77569E45-44FF-4673-8427-82BE81F14C6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.EfCore.Tests.UnitTests", "Services.EfCore.Tests.UnitTests\Services.EfCore.Tests.UnitTests.csproj", "{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.EfCore.Tests.UnitTests", "Services.EfCore.Tests.UnitTests\Services.EfCore.Tests.UnitTests.csproj", "{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleConsole", "ExampleConsole\ExampleConsole.csproj", "{0DEE324C-F34D-4793-8984-7AA4803DF9CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DEE324C-F34D-4793-8984-7AA4803DF9CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DEE324C-F34D-4793-8984-7AA4803DF9CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DEE324C-F34D-4793-8984-7AA4803DF9CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DEE324C-F34D-4793-8984-7AA4803DF9CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

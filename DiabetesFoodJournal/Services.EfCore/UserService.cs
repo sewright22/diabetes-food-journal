@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,22 +58,32 @@ namespace Services.EfCore
 
         public async Task<bool> ValidateCredentials(string userName, string password)
         {
-            var user = await this.DbContext.Users.Include(x => x.Userpassword).ThenInclude(x => x.Password)
-                .SingleOrDefaultAsync(x => x.Email == userName).ConfigureAwait(false);
-
-            if (user == null)
+            try
             {
-                throw new ArgumentException("Unknown user.");
+                var user = await this.DbContext.Users
+                    .Include(user => user.Userpassword)
+                    .ThenInclude(userPassword => userPassword.Password)
+                    .SingleOrDefaultAsync(x => x.Email == userName)
+                    .ConfigureAwait(false);
+
+                if (user == null)
+                {
+                    throw new ArgumentException("Unknown user.");
+                }
+
+                var passwordVerificationResult = this.PasswordHasher.VerifyHashedPassword(user, user.Userpassword.Password.Text, password);
+
+                if (passwordVerificationResult.HasFlag(PasswordVerificationResult.SuccessRehashNeeded))
+                {
+                    this.PasswordHasher.HashPassword(user, password);
+                }
+
+                return passwordVerificationResult.HasFlag(PasswordVerificationResult.Success) || passwordVerificationResult.HasFlag(PasswordVerificationResult.SuccessRehashNeeded);
             }
-
-            var passwordVerificationResult = this.PasswordHasher.VerifyHashedPassword(user, user.Userpassword.Password.Text, password);
-
-            if (passwordVerificationResult.HasFlag(PasswordVerificationResult.SuccessRehashNeeded))
+            catch(InvalidOperationException ioe)
             {
-                this.PasswordHasher.HashPassword(user, password);
+                throw new DuplicateNameException("Multiple records found with the same email.", ioe);
             }
-
-            return passwordVerificationResult.HasFlag(PasswordVerificationResult.Success) || passwordVerificationResult.HasFlag(PasswordVerificationResult.SuccessRehashNeeded);
         }
     }
 }
