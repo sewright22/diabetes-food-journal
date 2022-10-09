@@ -57,7 +57,7 @@ namespace Services.EfCore.Tests.UnitTests
 
             var userService = fixture.Create<UserService>();
 
-            var addUserAction = async () => { await userService.AddUser(null, "password").ConfigureAwait(false); };
+            var addUserAction = async () => { await userService.AddUser(null!, "password").ConfigureAwait(false); };
             await addUserAction.Should().ThrowAsync<ArgumentNullException>().WithParameterName("userName").ConfigureAwait(false);
         }
 
