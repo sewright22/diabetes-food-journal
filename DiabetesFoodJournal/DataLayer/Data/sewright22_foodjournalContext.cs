@@ -85,6 +85,8 @@ namespace DataLayer.Data
                 entity.Property(e => e.Title)
                     .UseCollation("utf8mb4_general_ci")
                     .HasCharSet("utf8mb4");
+
+                entity.HasMany(x => x.JournalEntryNutritionalEntryList).WithOne(x => x.JournalEntry);
             });
 
             modelBuilder.Entity<Journalentrydose>(entity =>
@@ -115,6 +117,8 @@ namespace DataLayer.Data
                 entity.Property(e => e.JournalEntryId).HasColumnType("int(11)");
 
                 entity.Property(e => e.NutritionalInfoId).HasColumnType("int(11)");
+
+                entity.HasOne<Nutritionalinfo>(x => x.Nutritionalinfo).WithOne(x => x.JournalEntryNutritionalInfo);
             });
 
             modelBuilder.Entity<Journalentrytag>(entity =>

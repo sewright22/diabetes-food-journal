@@ -9,5 +9,7 @@ namespace DataLayer.Data
         public DateTime Logged { get; set; }
         public string? Notes { get; set; }
         public string? Title { get; set; }
+
+        public virtual ICollection<Journalentrynutritionalinfo> JournalEntryNutritionalEntryList { get; set; }
     }
 }
