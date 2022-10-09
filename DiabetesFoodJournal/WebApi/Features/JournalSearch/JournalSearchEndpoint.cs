@@ -30,27 +30,11 @@ namespace WebApi.Features.JournalSearch
                 {
                     Id = journalSearchEntry.Id,
                     Name = journalSearchEntry.Title,
+                    CarbCount = journalSearchEntry.JournalEntryNutritionalInfo.Nutritionalinfo.Carbohydrates,
+                });
+             }
 
-
-                })
-                    
-            }
-
-            return Task.FromResult(new List<JournalSearchResponse>
-            {
-                new JournalSearchResponse
-                {
-                    Id = 1,
-                    Name = "Test",
-                    CarbCount = 10,
-                },
-                new JournalSearchResponse
-                {
-                    Id = 2,
-                    Name = "Test 2",
-                    CarbCount = 20,
-                },
-            });
+            return retVal;  
         }
     }
 }

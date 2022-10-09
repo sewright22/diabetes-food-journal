@@ -10,6 +10,6 @@ namespace DataLayer.Data
         public string? Notes { get; set; }
         public string? Title { get; set; }
 
-        public virtual ICollection<Journalentrynutritionalinfo> JournalEntryNutritionalEntryList { get; set; }
+        public virtual Journalentrynutritionalinfo? JournalEntryNutritionalInfo { get; set; }
     }
 }

@@ -86,7 +86,7 @@ namespace DataLayer.Data
                     .UseCollation("utf8mb4_general_ci")
                     .HasCharSet("utf8mb4");
 
-                entity.HasMany(x => x.JournalEntryNutritionalEntryList).WithOne(x => x.JournalEntry);
+                entity.HasOne(x => x.JournalEntryNutritionalInfo).WithOne(x => x.JournalEntry);
             });
 
             modelBuilder.Entity<Journalentrydose>(entity =>

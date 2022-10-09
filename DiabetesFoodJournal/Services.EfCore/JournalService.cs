@@ -1,4 +1,6 @@
 ﻿using DataLayer.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,15 @@ namespace Services.EfCore
 {
     public class JournalService : IJournalService
     {
-        public Task<ICollection<Journalentry>> SearchEntries(string searchValue)
+        public JournalService(sewright22_foodjournalContext dbContext)
         {
-            throw new NotImplementedException();
+            this.DbContext = dbContext;
+        }
+        public sewright22_foodjournalContext DbContext { get; }
+
+        public Task<List<Journalentry>> SearchEntries(string searchValue)
+        {
+            return this.DbContext.Journalentries.Where(x => x.Title.ToLower().Contains(searchValue.ToLower())).ToListAsync();
         }
     }
 }
