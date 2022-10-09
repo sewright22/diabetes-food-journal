@@ -15,5 +15,7 @@ namespace Services
         /// <param name="searchValue">String value to be searched partial match.</param>
         /// <returns>A list of journal entries that match the search value.</returns>
         public Task<List<Journalentry>> SearchEntries(string searchValue);
+
+        // TODO: Add method declaration for SearchTags. (Hint: it should return Task<List<Journalentry>>)
     }
 }

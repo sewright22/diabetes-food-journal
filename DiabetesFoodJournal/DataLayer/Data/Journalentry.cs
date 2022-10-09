@@ -11,5 +11,7 @@ namespace DataLayer.Data
         public string? Title { get; set; }
 
         public virtual Journalentrynutritionalinfo? JournalEntryNutritionalInfo { get; set; }
+
+        // TODO: Add Navigation property to JournalEntryTag.
     }
 }

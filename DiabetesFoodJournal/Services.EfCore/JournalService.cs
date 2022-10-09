@@ -24,5 +24,7 @@ namespace Services.EfCore
                 .ThenInclude(x=>x.Nutritionalinfo)
                 .Where(x => x.Title.ToLower().Contains(searchValue.ToLower())).ToListAsync();
         }
+
+        // TODO: Add implementation of tag search method declaration from IJournalService.
     }
 }
