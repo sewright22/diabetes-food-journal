@@ -19,7 +19,10 @@ namespace Services.EfCore
 
         public Task<List<Journalentry>> SearchEntries(string searchValue)
         {
-            return this.DbContext.Journalentries.Where(x => x.Title.ToLower().Contains(searchValue.ToLower())).ToListAsync();
+            return this.DbContext.Journalentries
+                .Include(x=>x.JournalEntryNutritionalInfo)
+                .ThenInclude(x=>x.Nutritionalinfo)
+                .Where(x => x.Title.ToLower().Contains(searchValue.ToLower())).ToListAsync();
         }
     }
 }

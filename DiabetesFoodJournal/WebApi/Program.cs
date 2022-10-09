@@ -17,6 +17,7 @@ builder.Services.AddDbContext<sewright22_foodjournalContext>(optionsBuilder =>
 });
 
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IJournalService, JournalService>();
 builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var app = builder.Build();

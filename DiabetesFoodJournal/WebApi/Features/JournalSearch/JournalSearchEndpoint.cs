@@ -30,7 +30,7 @@ namespace WebApi.Features.JournalSearch
                 {
                     Id = journalSearchEntry.Id,
                     Name = journalSearchEntry.Title,
-                    CarbCount = journalSearchEntry.JournalEntryNutritionalInfo.Nutritionalinfo.Carbohydrates,
+                    CarbCount = journalSearchEntry.JournalEntryNutritionalInfo?.Nutritionalinfo?.Carbohydrates,
                 });
              }
 
