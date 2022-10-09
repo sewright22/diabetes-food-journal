@@ -8,9 +8,9 @@
             this.AllowAnonymous();
         }
 
-        public override Task HandleAsync(JournalSearchRequest req, CancellationToken ct)
+        public override Task<List<JournalSearchResponse>> ExecuteAsync(JournalSearchRequest req, CancellationToken ct)
         {
-            return this.SendAsync(new List<JournalSearchResponse>
+            return Task.FromResult(new List<JournalSearchResponse>
             {
                 new JournalSearchResponse
                 {
