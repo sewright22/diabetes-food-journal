@@ -9,9 +9,7 @@ namespace DataLayer.Data
         public int Id { get; set; }
         public int JournalEntryId { get; set; }
         public int TagId { get; set; }
-
-        // TODO: Add Navigation property to JournalEntry.
-
-        // TODO: Add Navigation property to Tag.
+        public virtual Journalentry? JournalEntry { get; set; }
+        public virtual Tag? Tag { get; set; }
     }
 }
