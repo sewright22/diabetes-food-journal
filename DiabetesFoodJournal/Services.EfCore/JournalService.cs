@@ -25,6 +25,12 @@ namespace Services.EfCore
                 .Where(x => x.Title.ToLower().Contains(searchValue.ToLower())).ToListAsync();
         }
 
-        // TODO: Add implementation of tag search method declaration from IJournalService.
+        public Task<List<Journalentry>> SearchTags(string searchValue)
+        {
+            return this.DbContext.Journalentries
+                .Include(x => x.JournalEntryTags)
+                .ThenInclude(x => x.Tag)
+                .Where(x => x.JournalEntryTags.Any(x => x.Tag.Description.ToLower().Contains(searchValue.ToLower()))).ToListAsync();
+        }
     }
 }

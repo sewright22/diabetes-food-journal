@@ -23,6 +23,9 @@ namespace WebApi.Features.JournalSearch
             List<JournalSearchResponse> retVal = new List<JournalSearchResponse>();
             var journalSearchEntries = await this.JournalService.SearchEntries(req.SearchValue).ConfigureAwait(false);
 
+            //Could result in duplicate entries returned from search
+            journalSearchEntries.AddRange(await this.JournalService.SearchTags(req.SearchValue).ConfigureAwait(false));
+
             // Loop through journal search entries and create a list of journal serach response. 
             foreach (var journalSearchEntry in journalSearchEntries)
             {
