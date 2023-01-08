@@ -12,7 +12,7 @@ namespace DataLayer.Data
 
         public virtual Journalentrynutritionalinfo? JournalEntryNutritionalInfo { get; set; }
 
-        public virtual List<Journalentrytag>? JournalEntryTags { get; set; }
+        public virtual ICollection<Journalentrytag>? JournalEntryTags { get; set; }
 
     }
 }
