@@ -88,7 +88,7 @@ namespace DataLayer.Data
 
                 entity.HasOne(x => x.JournalEntryNutritionalInfo).WithOne(x => x.JournalEntry);
 
-                // TODO: Configure navigation property.
+                entity.HasMany(x => x.JournalEntryTags).WithOne(x => x.JournalEntry);
             });
 
             modelBuilder.Entity<Journalentrydose>(entity =>
@@ -137,7 +137,9 @@ namespace DataLayer.Data
 
                 entity.Property(e => e.TagId).HasColumnType("int(11)");
 
-                // TODO: Configure navigation property.
+                entity.HasOne(x => x.JournalEntry).WithMany(x => x.JournalEntryTags);
+
+                entity.HasOne(x => x.Tag).WithMany(x => x.JournalEntryTags);
             });
 
             modelBuilder.Entity<Nutritionalinfo>(entity =>
@@ -174,7 +176,7 @@ namespace DataLayer.Data
                     .UseCollation("utf8mb4_general_ci")
                     .HasCharSet("utf8mb4");
 
-                // TODO: Configure navigation property.
+                entity.HasMany(x => x.JournalEntryTags).WithOne(x => x.Tag);
             });
 
             modelBuilder.Entity<User>(entity =>
