@@ -16,6 +16,11 @@ namespace Services
         /// <returns>A list of journal entries that match the search value.</returns>
         public Task<List<Journalentry>> SearchEntries(string searchValue);
 
-        // TODO: Add method declaration for SearchTags. (Hint: it should return Task<List<Journalentry>>)
+        /// <summary>
+        /// Method to search for Journal entries that contain a specific tag.
+        /// </summary>
+        /// <param name="searchValue">Full or partial string value to be searched. </param>
+        /// <returns>A list of journal entries that contain the tag that matches the search value. </returns>
+        public Task<List<Journalentry>> SearchTags(string searchValue);
     }
 }
