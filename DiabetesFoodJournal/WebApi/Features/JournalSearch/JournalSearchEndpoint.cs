@@ -1,16 +1,22 @@
-﻿using Services;
-using Services.EfCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using DataLayer.Data;
+using Microsoft.EntityFrameworkCore;
+using Services;
+using WebApi.Extensions;
 
 namespace WebApi.Features.JournalSearch
 {
     public class JournalSearchEndpoint : Endpoint<JournalSearchRequest, List<JournalSearchResponse>>
     {
-        public JournalSearchEndpoint(IJournalService journalService)
+        public JournalSearchEndpoint(sewright22_foodjournalContext dbContext, IMapper mapper)
         {
-            this.JournalService = journalService;
+            this.DbContext = dbContext;
+            this.Mapper = mapper;
         }
 
-        public IJournalService JournalService { get; }
+        public sewright22_foodjournalContext DbContext { get; }
+        public IMapper Mapper { get; }
 
         public override void Configure()
         {
@@ -20,21 +26,16 @@ namespace WebApi.Features.JournalSearch
 
         public override async Task<List<JournalSearchResponse>> ExecuteAsync(JournalSearchRequest req, CancellationToken ct)
         {
-            List<JournalSearchResponse> retVal = new List<JournalSearchResponse>();
-            var journalSearchEntries = await this.JournalService.SearchEntries(req.SearchValue).ConfigureAwait(false);
-
-            // Loop through journal search entries and create a list of journal serach response. 
-            foreach (var journalSearchEntry in journalSearchEntries)
+            if (req.SearchValue == null)
             {
-                retVal.Add(new JournalSearchResponse
-                {
-                    Id = journalSearchEntry.Id,
-                    Name = journalSearchEntry.Title,
-                    CarbCount = journalSearchEntry.JournalEntryNutritionalInfo?.Nutritionalinfo?.Carbohydrates,
-                });
-             }
+                throw new ArgumentNullException(nameof(req));
+            }
 
-            return retVal;  
+            var journalSearchEntries = this.DbContext.Journalentries
+                .SearchTitleAndTag(req.SearchValue)
+                .ProjectTo<JournalSearchResponse>(this.Mapper.ConfigurationProvider);
+
+            return journalSearchEntries.ToList();
         }
     }
 }
