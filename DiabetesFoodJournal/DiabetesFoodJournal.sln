@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.EfCore", "Services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.EfCore.Tests.UnitTests", "Services.EfCore.Tests.UnitTests\Services.EfCore.Tests.UnitTests.csproj", "{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Maui", "Application.Maui\Application.Maui.csproj", "{99AC0956-1F16-4AF4-8BC9-C828BCE05B53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodJournalApp.Maui", "Application.Maui\FoodJournalApp.Maui.csproj", "{99AC0956-1F16-4AF4-8BC9-C828BCE05B53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
