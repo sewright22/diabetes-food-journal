@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.EfCore", "Services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.EfCore.Tests.UnitTests", "Services.EfCore.Tests.UnitTests\Services.EfCore.Tests.UnitTests.csproj", "{08FA3248-B431-43AA-A3C0-32B0F0A1D6C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodJournal.UI", "FoodJournal.UI\FoodJournal.UI.csproj", "{0B758A94-318A-4212-9F1D-FE2F554EEF7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodJournal.UI", "FoodJournal.UI\FoodJournal.UI.csproj", "{0B758A94-318A-4212-9F1D-FE2F554EEF7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
