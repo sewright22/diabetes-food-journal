@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionsTests", "ExtensionsTests\ExtensionsTests.csproj", "{12332AB7-0893-4F3F-9D1E-AA197191ACBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.ExternalTests", "Services.ExternalTests\Services.ExternalTests.csproj", "{0A4EA2D0-438F-49BC-964F-5C0F789EBFAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{12332AB7-0893-4F3F-9D1E-AA197191ACBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12332AB7-0893-4F3F-9D1E-AA197191ACBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12332AB7-0893-4F3F-9D1E-AA197191ACBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A4EA2D0-438F-49BC-964F-5C0F789EBFAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A4EA2D0-438F-49BC-964F-5C0F789EBFAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A4EA2D0-438F-49BC-964F-5C0F789EBFAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A4EA2D0-438F-49BC-964F-5C0F789EBFAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

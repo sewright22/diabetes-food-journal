@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Services.External
 {
+    [Serializable]
     public class TandemUser
     {
         public string Id { get; set; } = string.Empty;

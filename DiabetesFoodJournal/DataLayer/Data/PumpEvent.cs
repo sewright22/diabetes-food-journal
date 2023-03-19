@@ -51,7 +51,7 @@ namespace DataLayer.Data
         public long TempRateActivated { get; set; }
         public double? Iob { get; set; }
         public long? EventId { get; set; }
-        public DeviceType? DeviceType { get; set; }
+        public string? DeviceType { get; set; }
         public long? SerialNumber { get; set; }
         public Egv? Egv { get; set; }
     }
@@ -96,8 +96,6 @@ namespace DataLayer.Data
     }
 
     public enum BolusRequestOptions { Egv, Standard };
-
-    public enum DeviceType { TSlimX2InsulinPump };
 
     public enum TypeEnum { Bolus, Cgm };
 }

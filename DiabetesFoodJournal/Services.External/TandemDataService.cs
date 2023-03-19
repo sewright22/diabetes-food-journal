@@ -1,7 +1,9 @@
 ﻿using System.Net.Http.Headers;
-using System.Text.Json;
+using System.Text;
 using DataLayer.Data;
 using Extensions;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Services.External
 {
@@ -13,13 +15,17 @@ namespace Services.External
         public string Token { get; private set; }
         public string UserId { get; private set; }
         public string Scope { get; set; }
+        public TandemApiOptions Options { get; }
 
-        public TandemDataService(HttpClient httpClient)
+        public TandemDataService(HttpClient httpClient, IOptions<TandemApiOptions> options)
         {
             this.httpClient = httpClient;
+            this.Options = options.Value;
+            this.httpClient.BaseAddress = new Uri(baseUrl);
             this.Token = string.Empty;
             this.Scope = string.Empty;
             this.UserId = string.Empty;
+            this.Scope = "cloud.account cloud.upload cloud.accepttcpp cloud.email cloud.password";
         }
 
         public async Task<ReadingList> GetInsulinPumpDataAsync(DateTime startDate, DateTime endDate)
@@ -67,11 +73,20 @@ namespace Services.External
             }
         }
 
+        public void UpdateToken(string token, string userId)
+        {
+            this.Token = token;
+            this.UserId = userId;
+
+            // Add the token to the HTTP client.
+            this.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
+        }
+
         private static ReadingList ExtractReadingList(string content)
         {
 
             // Deserialize the Json response to obtain the token
-            ReadingList? readingList = JsonSerializer.Deserialize<ReadingList>(content);
+            ReadingList? readingList = JsonConvert.DeserializeObject<ReadingList>(content);
             if (readingList == null)
             {
                 // Invalid response
@@ -123,20 +138,11 @@ namespace Services.External
             return credentials;
         }
 
-        public void UpdateToken(string token, string userId)
-        {
-            this.Token = token;
-            this.UserId = userId;
-
-            // Add the token to the HTTP client.
-            this.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
-        }
-
         private static TandemTokenResponse ExtractTokenResponse(string content)
         {
 
             // Deserialize the JSON response to obtain the token
-            TandemTokenResponse? tokenResponse = JsonSerializer.Deserialize<TandemTokenResponse>(content);
+            TandemTokenResponse? tokenResponse = JsonConvert.DeserializeObject<TandemTokenResponse>(content);
 
             if (tokenResponse == null || tokenResponse.User == null)
             {
@@ -149,6 +155,9 @@ namespace Services.External
 
         private async Task<string> PostLogin(Dictionary<string, string> credentials)
         {
+            // Add basic authentication header to the request
+            var authHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{this.Options.ApplicationUsername}:{this.Options.ApplicationPassword}")));
+            httpClient.DefaultRequestHeaders.Authorization = authHeader;
 
             // Send a POST request to obtain a bearer token
             var response = await httpClient.PostAsync(Endpoints.Login.Path, new FormUrlEncodedContent(credentials));

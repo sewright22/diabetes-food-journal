@@ -7,7 +7,8 @@ using DataLayer.Data;
 
 namespace Services.External
 {
-    internal class TandemTokenResponse
+    [Serializable]
+    public class TandemTokenResponse
     {
         public string AccessToken { get; set; } = string.Empty;
         public DateTimeOffset AccessTokenExpiresAt { get; set; }

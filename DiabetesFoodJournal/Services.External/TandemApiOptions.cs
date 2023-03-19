@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Services.External
 {
-    [Serializable]
-    public class TandemClient
+    public class TandemApiOptions
     {
-        public string Id { get; set; } = string.Empty;
+        public string? ApplicationUsername { get; set; }
+        public string? ApplicationPassword { get; set; }
     }
 }
