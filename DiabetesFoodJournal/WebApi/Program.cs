@@ -9,8 +9,16 @@ using Services.EfCore;
 using Services.External;
 
 var builder = WebApplication.CreateBuilder();
+
+string? tokenSigningKey = builder.Configuration["TokenSigningKeys:Application"];
+
+if (tokenSigningKey == null)
+{
+    throw new ArgumentNullException(nameof(tokenSigningKey));
+}
+
 builder.Services.AddFastEndpoints();
-builder.Services.AddAuthenticationJWTBearer("TokenSigningKey");
+builder.Services.AddAuthenticationJWTBearer(tokenSigningKey);
 
 builder.Services.AddDbContext<sewright22_foodjournalContext>(optionsBuilder =>
 {
