@@ -1,5 +1,6 @@
 ﻿using FoodJournal.UI.Data;
 using Microsoft.Extensions.Logging;
+using Services;
 
 namespace FoodJournal.UI
 {
@@ -23,7 +24,8 @@ namespace FoodJournal.UI
 #endif
 
             builder.Services.AddSingleton<WeatherForecastService>();
-
+            builder.Services.AddSingleton<IDiabetesDataService, DiabetesDataService>();
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://10.0.2.2:60320/"), });
             return builder.Build();
         }
     }

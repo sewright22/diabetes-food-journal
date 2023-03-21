@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Core.Models;
 using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -7,7 +8,7 @@ using WebApi.Extensions;
 
 namespace WebApi.Features.JournalSearch
 {
-    public class JournalSearchEndpoint : Endpoint<JournalSearchRequest, List<JournalSearchResponse>>
+    public class JournalSearchEndpoint : Endpoint<JournalSearchRequest, List<JournalEntrySummary>>
     {
         public JournalSearchEndpoint(sewright22_foodjournalContext dbContext, IMapper mapper)
         {
@@ -24,7 +25,7 @@ namespace WebApi.Features.JournalSearch
             this.AllowAnonymous();
         }
 
-        public override async Task<List<JournalSearchResponse>> ExecuteAsync(JournalSearchRequest req, CancellationToken ct)
+        public override async Task<List<JournalEntrySummary>> ExecuteAsync(JournalSearchRequest req, CancellationToken ct)
         {
             if (req.SearchValue == null)
             {
@@ -33,7 +34,7 @@ namespace WebApi.Features.JournalSearch
 
             var journalSearchEntries = this.DbContext.Journalentries
                 .SearchTitleAndTag(req.SearchValue)
-                .ProjectTo<JournalSearchResponse>(this.Mapper.ConfigurationProvider);
+                .ProjectTo<JournalEntrySummary>(this.Mapper.ConfigurationProvider);
 
             return journalSearchEntries.ToList();
         }

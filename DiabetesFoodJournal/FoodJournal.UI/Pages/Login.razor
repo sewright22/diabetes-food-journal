@@ -2,6 +2,7 @@
 @page "/login"
 
 @using System.ComponentModel.DataAnnotations
+@using Services;
 
 <div class="container">
     <div class="row justify-content-center">
@@ -39,11 +40,13 @@
     private string password;
 
     @inject NavigationManager navManager
+    @inject IDiabetesDataService diabetesService
 
     private async Task HandleSubmit()
     {
+        var response = await diabetesService.Login(username, password).ConfigureAwait(false);
         // Perform authentication logic here.
-        if (username == "myuser" && password == "mypassword")
+        if (response != null)
         {
             // Authentication successful, redirect to home page.
             navManager.NavigateTo("/", true);
