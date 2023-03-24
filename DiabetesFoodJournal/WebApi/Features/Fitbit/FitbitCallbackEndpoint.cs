@@ -15,7 +15,6 @@ namespace WebApi.Features.Fitbit
 
         public IFitbitService FitbitService { get; }
         public FitbitApiOptions ApiOptions { get; }
-        public HttpClient HttpClient { get; }
 
         public override void Configure()
         {

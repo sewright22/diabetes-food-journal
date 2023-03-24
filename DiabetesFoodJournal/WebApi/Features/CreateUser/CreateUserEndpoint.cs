@@ -19,8 +19,16 @@ namespace WebApi.Features.CreateUser
             this.Routes("api/user/create");
             AllowAnonymous();
         }
+
         public override async Task HandleAsync(CreateUserRequest request, CancellationToken ct)
         {
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+            {
+                this.AddError("Email and password are required.");
+                await this.SendErrorsAsync(cancellation: ct).ConfigureAwait(false);
+                return;
+            }
+
             User newUser = await this.UserService.AddUser(request.Email, request.Password).ConfigureAwait(false);
 
             var response = new CreateUserResponse

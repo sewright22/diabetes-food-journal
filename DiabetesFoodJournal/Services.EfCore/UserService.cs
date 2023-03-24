@@ -62,11 +62,11 @@ namespace Services.EfCore
             {
                 var user = await this.DbContext.Users
                     .Include(user => user.Userpassword)
-                    .ThenInclude(userPassword => userPassword.Password)
+                    .ThenInclude(userPassword => userPassword != null ? userPassword.Password : null)
                     .SingleOrDefaultAsync(x => x.Email == userName)
                     .ConfigureAwait(false);
 
-                if (user == null)
+                if (user == null || user.Userpassword == null || user.Userpassword.Password == null)
                 {
                     throw new ArgumentException("Unknown user.");
                 }
@@ -80,7 +80,7 @@ namespace Services.EfCore
 
                 return passwordVerificationResult.HasFlag(PasswordVerificationResult.Success) || passwordVerificationResult.HasFlag(PasswordVerificationResult.SuccessRehashNeeded);
             }
-            catch(InvalidOperationException ioe)
+            catch (InvalidOperationException ioe)
             {
                 throw new DuplicateNameException("Multiple records found with the same email.", ioe);
             }
