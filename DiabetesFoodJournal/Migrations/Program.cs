@@ -14,5 +14,6 @@ var optionsBuilder = new DbContextOptionsBuilder<sewright22_foodjournalContext>(
 optionsBuilder.UseMySql(connectionString, ServerVersion.Create(5, 0, 0, Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MySql));
 
 using var dbContext = new sewright22_foodjournalContext(optionsBuilder.Options);
+dbContext.Database.EnsureDeleted();
 dbContext.Database.EnsureCreated();
 dbContext.Database.Migrate();

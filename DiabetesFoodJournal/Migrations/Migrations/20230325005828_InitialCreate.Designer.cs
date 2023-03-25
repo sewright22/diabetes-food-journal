@@ -11,7 +11,7 @@ using Migrations;
 namespace Migrations.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    [Migration("20230324020056_InitialCreate")]
+    [Migration("20230325005828_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -53,20 +53,55 @@ namespace Migrations.Migrations
                     b.ToTable("doses", (string)null);
                 });
 
-            modelBuilder.Entity("DataLayer.Data.Efmigrationshistory", b =>
+            modelBuilder.Entity("DataLayer.Data.ExternalService", b =>
                 {
-                    b.Property<string>("MigrationId")
-                        .HasColumnType("varchar(95)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int(11)");
 
-                    b.Property<string>("ProductVersion")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32)");
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .UseCollation("utf8mb4_general_ci");
 
-                    b.HasKey("MigrationId")
-                        .HasName("PRIMARY");
+                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("Name"), "utf8mb4");
 
-                    b.ToTable("__efmigrationshistory", (string)null);
+                    b.HasKey("Id");
+
+                    b.ToTable("ExternalService", (string)null);
+                });
+
+            modelBuilder.Entity("DataLayer.Data.ExternalServiceUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("AccessTokenId")
+                        .HasColumnType("int(11)");
+
+                    b.Property<int>("ExternalServiceId")
+                        .HasColumnType("int(11)");
+
+                    b.Property<DateTimeOffset?>("ExternalTokenExpiration")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("RefreshTokenId")
+                        .HasColumnType("int(11)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int(11)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccessTokenId");
+
+                    b.HasIndex("ExternalServiceId");
+
+                    b.HasIndex("RefreshTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExternalServiceUsers");
                 });
 
             modelBuilder.Entity("DataLayer.Data.Journalentry", b =>
@@ -136,10 +171,6 @@ namespace Migrations.Migrations
 
                     b.HasIndex("NutritionalInfoId")
                         .IsUnique();
-
-                    b.HasIndex(new[] { "JournalEntryId" }, "IX_JournalEntryNutritionalInfos_JournalEntryId");
-
-                    b.HasIndex(new[] { "NutritionalInfoId" }, "IX_JournalEntryNutritionalInfos_NutritionalInfoId");
 
                     b.ToTable("journalentrynutritionalinfos", (string)null);
                 });
@@ -219,6 +250,43 @@ namespace Migrations.Migrations
                     b.ToTable("tags", (string)null);
                 });
 
+            modelBuilder.Entity("DataLayer.Data.Token", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int(11)");
+
+                    b.Property<DateTimeOffset>("Expiration")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Token", (string)null);
+                });
+
+            modelBuilder.Entity("DataLayer.Data.TokenType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int(11)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TokenType", (string)null);
+                });
+
             modelBuilder.Entity("DataLayer.Data.User", b =>
                 {
                     b.Property<int>("Id")
@@ -279,6 +347,41 @@ namespace Migrations.Migrations
                     b.ToTable("userpasswords", (string)null);
                 });
 
+            modelBuilder.Entity("DataLayer.Data.ExternalServiceUser", b =>
+                {
+                    b.HasOne("DataLayer.Data.Token", "AccessToken")
+                        .WithMany()
+                        .HasForeignKey("AccessTokenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataLayer.Data.ExternalService", "ExternalService")
+                        .WithMany("ExternalServiceUsers")
+                        .HasForeignKey("ExternalServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataLayer.Data.Token", "RefreshToken")
+                        .WithMany()
+                        .HasForeignKey("RefreshTokenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataLayer.Data.User", "User")
+                        .WithMany("ExternalServiceUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AccessToken");
+
+                    b.Navigation("ExternalService");
+
+                    b.Navigation("RefreshToken");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DataLayer.Data.Journalentrynutritionalinfo", b =>
                 {
                     b.HasOne("DataLayer.Data.Journalentry", "JournalEntry")
@@ -336,6 +439,11 @@ namespace Migrations.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DataLayer.Data.ExternalService", b =>
+                {
+                    b.Navigation("ExternalServiceUsers");
+                });
+
             modelBuilder.Entity("DataLayer.Data.Journalentry", b =>
                 {
                     b.Navigation("JournalEntryNutritionalInfo");
@@ -355,6 +463,8 @@ namespace Migrations.Migrations
 
             modelBuilder.Entity("DataLayer.Data.User", b =>
                 {
+                    b.Navigation("ExternalServiceUsers");
+
                     b.Navigation("Userpassword");
                 });
 #pragma warning restore 612, 618

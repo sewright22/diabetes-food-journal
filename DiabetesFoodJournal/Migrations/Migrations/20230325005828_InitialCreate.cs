@@ -16,22 +16,6 @@ namespace Migrations.Migrations
                 .Annotation("MySql:CharSet", "utf8");
 
             migrationBuilder.CreateTable(
-                name: "__efmigrationshistory",
-                columns: table => new
-                {
-                    MigrationId = table.Column<string>(type: "varchar(95)", nullable: false, collation: "utf8_general_ci")
-                        .Annotation("MySql:CharSet", "utf8"),
-                    ProductVersion = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false, collation: "utf8_general_ci")
-                        .Annotation("MySql:CharSet", "utf8")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PRIMARY", x => x.MigrationId);
-                })
-                .Annotation("MySql:CharSet", "utf8")
-                .Annotation("Relational:Collation", "utf8_general_ci");
-
-            migrationBuilder.CreateTable(
                 name: "doses",
                 columns: table => new
                 {
@@ -46,6 +30,22 @@ namespace Migrations.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_doses", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8")
+                .Annotation("Relational:Collation", "utf8_general_ci");
+
+            migrationBuilder.CreateTable(
+                name: "ExternalService",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int(11)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb4_general_ci")
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExternalService", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8")
                 .Annotation("Relational:Collation", "utf8_general_ci");
@@ -130,6 +130,41 @@ namespace Migrations.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tags", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8")
+                .Annotation("Relational:Collation", "utf8_general_ci");
+
+            migrationBuilder.CreateTable(
+                name: "Token",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int(11)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false),
+                    Expiration = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    Value = table.Column<string>(type: "longtext", nullable: true, collation: "utf8_general_ci")
+                        .Annotation("MySql:CharSet", "utf8")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Token", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8")
+                .Annotation("Relational:Collation", "utf8_general_ci");
+
+            migrationBuilder.CreateTable(
+                name: "TokenType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int(11)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: true, collation: "utf8_general_ci")
+                        .Annotation("MySql:CharSet", "utf8")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TokenType", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8")
                 .Annotation("Relational:Collation", "utf8_general_ci");
@@ -223,6 +258,49 @@ namespace Migrations.Migrations
                 .Annotation("Relational:Collation", "utf8_general_ci");
 
             migrationBuilder.CreateTable(
+                name: "ExternalServiceUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ExternalServiceId = table.Column<int>(type: "int(11)", nullable: false),
+                    UserId = table.Column<int>(type: "int(11)", nullable: false),
+                    ExternalTokenExpiration = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
+                    AccessTokenId = table.Column<int>(type: "int(11)", nullable: false),
+                    RefreshTokenId = table.Column<int>(type: "int(11)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExternalServiceUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExternalServiceUsers_ExternalService_ExternalServiceId",
+                        column: x => x.ExternalServiceId,
+                        principalTable: "ExternalService",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExternalServiceUsers_Token_AccessTokenId",
+                        column: x => x.AccessTokenId,
+                        principalTable: "Token",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExternalServiceUsers_Token_RefreshTokenId",
+                        column: x => x.RefreshTokenId,
+                        principalTable: "Token",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExternalServiceUsers_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8")
+                .Annotation("Relational:Collation", "utf8_general_ci");
+
+            migrationBuilder.CreateTable(
                 name: "userpasswords",
                 columns: table => new
                 {
@@ -251,6 +329,26 @@ namespace Migrations.Migrations
                 .Annotation("Relational:Collation", "utf8_general_ci");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExternalServiceUsers_AccessTokenId",
+                table: "ExternalServiceUsers",
+                column: "AccessTokenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalServiceUsers_ExternalServiceId",
+                table: "ExternalServiceUsers",
+                column: "ExternalServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalServiceUsers_RefreshTokenId",
+                table: "ExternalServiceUsers",
+                column: "RefreshTokenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalServiceUsers_UserId",
+                table: "ExternalServiceUsers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_JournalEntryDoses_DoseId",
                 table: "journalentrydoses",
                 column: "DoseId");
@@ -267,20 +365,10 @@ namespace Migrations.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_JournalEntryNutritionalInfos_JournalEntryId",
-                table: "journalentrynutritionalinfos",
-                column: "JournalEntryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_journalentrynutritionalinfos_NutritionalInfoId",
                 table: "journalentrynutritionalinfos",
                 column: "NutritionalInfoId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_JournalEntryNutritionalInfos_NutritionalInfoId",
-                table: "journalentrynutritionalinfos",
-                column: "NutritionalInfoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JournalEntryTags_JournalEntryId",
@@ -318,10 +406,10 @@ namespace Migrations.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "__efmigrationshistory");
+                name: "doses");
 
             migrationBuilder.DropTable(
-                name: "doses");
+                name: "ExternalServiceUsers");
 
             migrationBuilder.DropTable(
                 name: "journalentrydoses");
@@ -333,10 +421,19 @@ namespace Migrations.Migrations
                 name: "journalentrytags");
 
             migrationBuilder.DropTable(
+                name: "TokenType");
+
+            migrationBuilder.DropTable(
                 name: "userjournalentries");
 
             migrationBuilder.DropTable(
                 name: "userpasswords");
+
+            migrationBuilder.DropTable(
+                name: "ExternalService");
+
+            migrationBuilder.DropTable(
+                name: "Token");
 
             migrationBuilder.DropTable(
                 name: "nutritionalinfos");

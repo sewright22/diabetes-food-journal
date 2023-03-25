@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -17,7 +18,6 @@ namespace DataLayer.Data
         }
 
         public virtual DbSet<Dose> Doses { get; set; } = null!;
-        public virtual DbSet<Efmigrationshistory> Efmigrationshistories { get; set; } = null!;
         public virtual DbSet<ExternalService> ExternalServices { get; set; } = null!;
         public virtual DbSet<ExternalServiceUser> ExternalServiceUsers { get; set; } = null!;
         public virtual DbSet<Journalentry> Journalentries { get; set; } = null!;
@@ -64,16 +64,6 @@ namespace DataLayer.Data
                 entity.Property(e => e.UpFront).HasColumnType("int(11)");
             });
 
-            modelBuilder.Entity<Efmigrationshistory>(entity =>
-            {
-                entity.HasKey(e => e.MigrationId)
-                    .HasName("PRIMARY");
-
-                entity.ToTable("__efmigrationshistory");
-
-                entity.Property(e => e.ProductVersion).HasMaxLength(32);
-            });
-
             modelBuilder.Entity<ExternalService>(entity =>
             {
                 entity.ToTable(nameof(ExternalService));
@@ -81,18 +71,14 @@ namespace DataLayer.Data
                 entity.Property(e => e.Name)
                     .UseCollation("utf8mb4_general_ci")
                     .HasCharSet("utf8mb4");
-                entity.HasMany(x => x.Users).WithMany(x => x.ExternalServices).UsingEntity(entity => entity.ToTable(nameof(ExternalServiceUser)));
-            });
-
-            modelBuilder.Entity<ExternalServiceUser>(entity =>
-            {
-                entity.ToTable(nameof(ExternalServiceUser));
-
-                entity.Property(e => e.Id).HasColumnType("int(11)");
-                entity.Property(e => e.ExternalTokenExpiration).HasColumnType("datetimeoffset");
-                entity.HasKey(e => new { e.UserId, e.ExternalServiceId });
-                entity.HasOne(e => e.AccessToken);
-                entity.HasOne(e => e.RefreshToken);
+                entity.HasMany(x => x.Users).WithMany(x => x.ExternalServices)
+                .UsingEntity<ExternalServiceUser>(
+                    u => u.HasOne(ue => ue.User)
+                        .WithMany(x => x.ExternalServiceUsers)
+                        .HasForeignKey(x => x.UserId),
+                    u => u.HasOne(e => e.ExternalService)
+                        .WithMany(x => x.ExternalServiceUsers)
+                        .HasForeignKey(u => u.ExternalServiceId));
             });
 
             modelBuilder.Entity<Journalentry>(entity =>
@@ -135,9 +121,9 @@ namespace DataLayer.Data
             {
                 entity.ToTable("journalentrynutritionalinfos");
 
-                entity.HasIndex(e => e.JournalEntryId, "IX_JournalEntryNutritionalInfos_JournalEntryId");
+                entity.HasIndex(e => e.JournalEntryId);
 
-                entity.HasIndex(e => e.NutritionalInfoId, "IX_JournalEntryNutritionalInfos_NutritionalInfoId");
+                entity.HasIndex(e => e.NutritionalInfoId);
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 

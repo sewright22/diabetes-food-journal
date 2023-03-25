@@ -15,5 +15,6 @@ namespace DataLayer.Data
 
         public virtual Userpassword? Userpassword { get; set; }
         public virtual ICollection<ExternalService> ExternalServices { get; set; }
+        public virtual ICollection<ExternalServiceUser> ExternalServiceUsers { get; set; }
     }
 }
