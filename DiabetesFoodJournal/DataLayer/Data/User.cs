@@ -5,9 +5,15 @@ namespace DataLayer.Data
 {
     public partial class User
     {
+        public User()
+        {
+            this.ExternalServices = new HashSet<ExternalService>();
+        }
+
         public int Id { get; set; }
         public string? Email { get; set; }
 
         public virtual Userpassword? Userpassword { get; set; }
+        public virtual ICollection<ExternalService> ExternalServices { get; set; }
     }
 }

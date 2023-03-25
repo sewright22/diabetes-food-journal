@@ -18,6 +18,8 @@ namespace DataLayer.Data
 
         public virtual DbSet<Dose> Doses { get; set; } = null!;
         public virtual DbSet<Efmigrationshistory> Efmigrationshistories { get; set; } = null!;
+        public virtual DbSet<ExternalService> ExternalServices { get; set; } = null!;
+        public virtual DbSet<ExternalServiceUser> ExternalServiceUsers { get; set; } = null!;
         public virtual DbSet<Journalentry> Journalentries { get; set; } = null!;
         public virtual DbSet<Journalentrydose> Journalentrydoses { get; set; } = null!;
         public virtual DbSet<Journalentrynutritionalinfo> Journalentrynutritionalinfos { get; set; } = null!;
@@ -25,6 +27,8 @@ namespace DataLayer.Data
         public virtual DbSet<Nutritionalinfo> Nutritionalinfos { get; set; } = null!;
         public virtual DbSet<Password> Passwords { get; set; } = null!;
         public virtual DbSet<Tag> Tags { get; set; } = null!;
+        public virtual DbSet<Token> Tokens { get; set; } = null!;
+        public virtual DbSet<TokenType> TokenTypes { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Userjournalentry> Userjournalentries { get; set; } = null!;
         public virtual DbSet<Userpassword> Userpasswords { get; set; } = null!;
@@ -68,6 +72,27 @@ namespace DataLayer.Data
                 entity.ToTable("__efmigrationshistory");
 
                 entity.Property(e => e.ProductVersion).HasMaxLength(32);
+            });
+
+            modelBuilder.Entity<ExternalService>(entity =>
+            {
+                entity.ToTable(nameof(ExternalService));
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Name)
+                    .UseCollation("utf8mb4_general_ci")
+                    .HasCharSet("utf8mb4");
+                entity.HasMany(x => x.Users).WithMany(x => x.ExternalServices).UsingEntity(entity => entity.ToTable(nameof(ExternalServiceUser)));
+            });
+
+            modelBuilder.Entity<ExternalServiceUser>(entity =>
+            {
+                entity.ToTable(nameof(ExternalServiceUser));
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.ExternalTokenExpiration).HasColumnType("datetimeoffset");
+                entity.HasKey(e => new { e.UserId, e.ExternalServiceId });
+                entity.HasOne(e => e.AccessToken);
+                entity.HasOne(e => e.RefreshToken);
             });
 
             modelBuilder.Entity<Journalentry>(entity =>
@@ -179,6 +204,18 @@ namespace DataLayer.Data
                 entity.HasMany(x => x.JournalEntryTags).WithOne(x => x.Tag);
             });
 
+            modelBuilder.Entity<Token>(entity =>
+            {
+                entity.ToTable($"{nameof(Token)}");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+            });
+
+            modelBuilder.Entity<TokenType>(entity =>
+            {
+                entity.ToTable($"{nameof(TokenType)}");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("users");
@@ -220,7 +257,7 @@ namespace DataLayer.Data
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
-                entity.HasOne(x => x.User).WithOne(x=>x.Userpassword);
+                entity.HasOne(x => x.User).WithOne(x => x.Userpassword);
             });
 
             OnModelCreatingPartial(modelBuilder);
