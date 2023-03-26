@@ -1,6 +1,7 @@
 ﻿using Core.Models;
 using Core.Requests;
 using Core.Responses;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Services;
 
 namespace WebApi.Features.UserLogin
@@ -47,10 +48,12 @@ namespace WebApi.Features.UserLogin
                 this.ThrowError("The supplied credentials are invalid!");
             }
 
+            DataLayer.Data.User user = await this.UserService.GetUser(req.Username!).ConfigureAwait(false);
+
             var jwtToken = JWTBearer.CreateToken(
                       signingKey: this.SigningKey!,
                       expireAt: DateTime.UtcNow.AddDays(1),
-                      claims: new[] { ("Username", req.Username!), ("UserID", "001") },
+                      claims: new[] { ("Username", user.Email), ("UserID", user.Id.ToString()) },
                       roles: new[] { "Admin", "Management" },
                       permissions: new[] { "ManageInventory", "ManageUsers" });
 

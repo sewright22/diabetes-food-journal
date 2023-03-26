@@ -11,7 +11,7 @@ namespace DataLayer.Data
         }
 
         public int Id { get; set; }
-        public string? Email { get; set; }
+        public string Email { get; set; } = null!;
 
         public virtual Userpassword? Userpassword { get; set; }
         public virtual ICollection<ExternalService> ExternalServices { get; set; }

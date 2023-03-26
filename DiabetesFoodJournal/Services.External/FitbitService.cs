@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -21,9 +22,9 @@ namespace Services.External
 
         public HttpClient HttpClient { get; }
 
-        public string BuildAuthorizationUrl(string clientId, string redirectUrl, string scope)
+        public string BuildAuthorizationUrl(string clientId, string redirectUrl, string scope, string state)
         {
-            return $"{this.AuthorizeUrl}?response_type=code&client_id={clientId}&redirect_uri={redirectUrl}&scope={scope}";
+            return $"{this.AuthorizeUrl}?response_type=code&client_id={clientId}&redirect_uri={redirectUrl}&scope={scope}&state={state}";
         }
 
         public async Task<IResponseToken> GetAccessToken(string? clientId, string? clientSecret, string? code, string? redirectUrl)
@@ -39,6 +40,13 @@ namespace Services.External
             var json = await response.Content.ReadAsStringAsync();
             var fitBitToken = Newtonsoft.Json.JsonConvert.DeserializeObject<FitbitToken>(json);
             return fitBitToken;
+        }
+
+        public async Task<string> GetProfile(string token, string userId)
+        {
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await this.HttpClient.GetAsync($"https://api.fitbit.com/1/user/{userId}/profile.json");
+            return await response.Content.ReadAsStringAsync();
         }
     }
 

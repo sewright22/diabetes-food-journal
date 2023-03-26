@@ -56,6 +56,21 @@ namespace Services.EfCore
             return userToAdd;
         }
 
+        public Task<User> GetUser(string userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                throw new ArgumentNullException(nameof(userName));
+            }
+
+            if (this.DbContext.Users.Any(x => x.Email == userName) == false)
+            {
+                throw new ArgumentException("User does not exist!");
+            }
+
+            return this.DbContext.Users.SingleAsync(x => x.Email == userName);
+        }
+
         public async Task<bool> ValidateCredentials(string userName, string password)
         {
             try

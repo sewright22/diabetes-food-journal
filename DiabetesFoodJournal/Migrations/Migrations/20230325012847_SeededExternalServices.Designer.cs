@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Migrations;
 
@@ -10,9 +11,11 @@ using Migrations;
 namespace Migrations.Migrations
 {
     [DbContext(typeof(MigrationDbContext))]
-    partial class MigrationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230325012847_SeededExternalServices")]
+    partial class SeededExternalServices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,7 +88,7 @@ namespace Migrations.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("AccessTokenId")
+                    b.Property<int>("AccessTokenId")
                         .HasColumnType("int(11)");
 
                     b.Property<int>("ExternalServiceId")
@@ -94,11 +97,8 @@ namespace Migrations.Migrations
                     b.Property<DateTimeOffset?>("ExternalTokenExpiration")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("RefreshTokenId")
+                    b.Property<int>("RefreshTokenId")
                         .HasColumnType("int(11)");
-
-                    b.Property<string>("State")
-                        .HasColumnType("longtext");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int(11)");
@@ -306,7 +306,6 @@ namespace Migrations.Migrations
                         .HasColumnType("int(11)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("longtext")
                         .UseCollation("utf8mb4_general_ci");
 
@@ -364,7 +363,9 @@ namespace Migrations.Migrations
                 {
                     b.HasOne("DataLayer.Data.Token", "AccessToken")
                         .WithMany()
-                        .HasForeignKey("AccessTokenId");
+                        .HasForeignKey("AccessTokenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DataLayer.Data.ExternalService", "ExternalService")
                         .WithMany("ExternalServiceUsers")
@@ -374,7 +375,9 @@ namespace Migrations.Migrations
 
                     b.HasOne("DataLayer.Data.Token", "RefreshToken")
                         .WithMany()
-                        .HasForeignKey("RefreshTokenId");
+                        .HasForeignKey("RefreshTokenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DataLayer.Data.User", "User")
                         .WithMany("ExternalServiceUsers")

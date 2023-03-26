@@ -79,6 +79,8 @@ namespace DataLayer.Data
                     u => u.HasOne(e => e.ExternalService)
                         .WithMany(x => x.ExternalServiceUsers)
                         .HasForeignKey(u => u.ExternalServiceId));
+
+                entity.HasData(new ExternalService { Id = 1, Name = "Fitbit" }, new ExternalService { Id = 2, Name = "Tandem" });
             });
 
             modelBuilder.Entity<Journalentry>(entity =>

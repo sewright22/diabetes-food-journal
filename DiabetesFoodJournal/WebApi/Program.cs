@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.EfCore;
 using Services.External;
+using WebApi;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -19,6 +20,11 @@ if (tokenSigningKey == null)
 
 builder.Services.AddFastEndpoints();
 builder.Services.AddAuthenticationJWTBearer(tokenSigningKey);
+
+builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
+{
+    optionsBuilder.UseMySql(builder.Configuration["ConnectionStrings:foodJournal"], Microsoft.EntityFrameworkCore.ServerVersion.Parse("5.6.44-mysql"));
+});
 
 builder.Services.AddDbContext<sewright22_foodjournalContext>(optionsBuilder =>
 {
