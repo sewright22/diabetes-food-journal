@@ -34,6 +34,14 @@ namespace FoodJournal.UI.Data
             }
         }
 
+        public async Task<FoodLogResponse> GetFoodLog(string token, DateTime date)
+        {
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var retVal = await  HttpClient.GetFromJsonAsync<FoodLogResponse>($"api/foodlog?Date={date.ToString("yyyy-MM-dd")}");
+            var test = retVal;
+            return retVal;
+        }
+
         public Task<LoginResponse> Login(string username, string password)
         {
             var loginRequest = new LoginRequest

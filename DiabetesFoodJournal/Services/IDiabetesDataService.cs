@@ -11,5 +11,7 @@ namespace Services
     {
         public Task<LoginResponse> Login(string username, string password);
         public Task<string> GetFitbitLink(string token);
+
+        public Task<FoodLogResponse> GetFoodLog(string token, DateTime date);
     }
 }

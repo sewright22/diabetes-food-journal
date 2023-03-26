@@ -4,6 +4,7 @@ using DataLayer.Data;
 using Microsoft.Extensions.Options;
 using Services;
 using Services.External;
+using WebApi.Extensions;
 
 namespace WebApi.Features.Fitbit
 {
@@ -29,7 +30,7 @@ namespace WebApi.Features.Fitbit
         {
             var currentUser = this.User;
 
-            var userId = currentUser.Claims.FirstOrDefault(x => x.Type == "UserID");
+            var userId = currentUser.GetUserId();
 
             string state = GenerateRandomState();
 
@@ -38,14 +39,14 @@ namespace WebApi.Features.Fitbit
             return this.SendOkAsync(this.FitbitService.BuildAuthorizationUrl(this.FitbitOptions.ClientId, this.FitbitOptions.RedirectUrl, this.FitbitOptions.Scope, state));
         }
 
-        private void AddExternalServiceToUser(Claim? userId, string serviceName, string state)
+        private void AddExternalServiceToUser(string userId, string serviceName, string state)
         {
             if (userId == null)
             {
                 throw new ArgumentNullException(nameof(userId));
             }
 
-            var id = int.Parse(userId.Value);
+            var id = int.Parse(userId);
             ExternalService externalService = GetExternalService(serviceName);
 
             var externalServiceUser = this.DbContext.ExternalServiceUsers.FirstOrDefault(x => x.UserId == id);
@@ -61,6 +62,7 @@ namespace WebApi.Features.Fitbit
                 this.DbContext.ExternalServiceUsers.Add(externalServiceUser);
             }
 
+            externalServiceUser.State = state;
             this.ClearTokens(externalServiceUser);
 
             this.DbContext.SaveChanges();
