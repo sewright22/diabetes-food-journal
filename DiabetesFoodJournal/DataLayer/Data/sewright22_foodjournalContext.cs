@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -17,7 +18,8 @@ namespace DataLayer.Data
         }
 
         public virtual DbSet<Dose> Doses { get; set; } = null!;
-        public virtual DbSet<Efmigrationshistory> Efmigrationshistories { get; set; } = null!;
+        public virtual DbSet<ExternalService> ExternalServices { get; set; } = null!;
+        public virtual DbSet<ExternalServiceUser> ExternalServiceUsers { get; set; } = null!;
         public virtual DbSet<Journalentry> Journalentries { get; set; } = null!;
         public virtual DbSet<Journalentrydose> Journalentrydoses { get; set; } = null!;
         public virtual DbSet<Journalentrynutritionalinfo> Journalentrynutritionalinfos { get; set; } = null!;
@@ -25,6 +27,8 @@ namespace DataLayer.Data
         public virtual DbSet<Nutritionalinfo> Nutritionalinfos { get; set; } = null!;
         public virtual DbSet<Password> Passwords { get; set; } = null!;
         public virtual DbSet<Tag> Tags { get; set; } = null!;
+        public virtual DbSet<Token> Tokens { get; set; } = null!;
+        public virtual DbSet<TokenType> TokenTypes { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Userjournalentry> Userjournalentries { get; set; } = null!;
         public virtual DbSet<Userpassword> Userpasswords { get; set; } = null!;
@@ -60,14 +64,23 @@ namespace DataLayer.Data
                 entity.Property(e => e.UpFront).HasColumnType("int(11)");
             });
 
-            modelBuilder.Entity<Efmigrationshistory>(entity =>
+            modelBuilder.Entity<ExternalService>(entity =>
             {
-                entity.HasKey(e => e.MigrationId)
-                    .HasName("PRIMARY");
+                entity.ToTable(nameof(ExternalService));
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Name)
+                    .UseCollation("utf8mb4_general_ci")
+                    .HasCharSet("utf8mb4");
+                entity.HasMany(x => x.Users).WithMany(x => x.ExternalServices)
+                .UsingEntity<ExternalServiceUser>(
+                    u => u.HasOne(ue => ue.User)
+                        .WithMany(x => x.ExternalServiceUsers)
+                        .HasForeignKey(x => x.UserId),
+                    u => u.HasOne(e => e.ExternalService)
+                        .WithMany(x => x.ExternalServiceUsers)
+                        .HasForeignKey(u => u.ExternalServiceId));
 
-                entity.ToTable("__efmigrationshistory");
-
-                entity.Property(e => e.ProductVersion).HasMaxLength(32);
+                entity.HasData(new ExternalService { Id = 1, Name = "Fitbit" }, new ExternalService { Id = 2, Name = "Tandem" });
             });
 
             modelBuilder.Entity<Journalentry>(entity =>
@@ -110,9 +123,9 @@ namespace DataLayer.Data
             {
                 entity.ToTable("journalentrynutritionalinfos");
 
-                entity.HasIndex(e => e.JournalEntryId, "IX_JournalEntryNutritionalInfos_JournalEntryId");
+                entity.HasIndex(e => e.JournalEntryId);
 
-                entity.HasIndex(e => e.NutritionalInfoId, "IX_JournalEntryNutritionalInfos_NutritionalInfoId");
+                entity.HasIndex(e => e.NutritionalInfoId);
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -179,6 +192,22 @@ namespace DataLayer.Data
                 entity.HasMany(x => x.JournalEntryTags).WithOne(x => x.Tag);
             });
 
+            modelBuilder.Entity<Token>(entity =>
+            {
+                entity.ToTable($"{nameof(Token)}");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.HasOne(x => x.TokenType);
+            });
+
+            modelBuilder.Entity<TokenType>(entity =>
+            {
+                entity.ToTable($"{nameof(TokenType)}");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.HasData(new[] { new TokenType { Id = 1, Name = "Refresh" }, new TokenType { Id = 2, Name = "Access" } });
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("users");
@@ -220,7 +249,7 @@ namespace DataLayer.Data
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
-                entity.HasOne(x => x.User).WithOne(x=>x.Userpassword);
+                entity.HasOne(x => x.User).WithOne(x => x.Userpassword);
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -1,6 +1,8 @@
 ﻿using Core.Models;
 using Core.Requests;
 using Core.Responses;
+using DataLayer.Data;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Services;
 
 namespace WebApi.Features.UserLogin
@@ -47,10 +49,12 @@ namespace WebApi.Features.UserLogin
                 this.ThrowError("The supplied credentials are invalid!");
             }
 
+            DataLayer.Data.User user = await this.UserService.GetUser(req.Username!).ConfigureAwait(false);
+
             var jwtToken = JWTBearer.CreateToken(
                       signingKey: this.SigningKey!,
                       expireAt: DateTime.UtcNow.AddDays(1),
-                      claims: new[] { ("Username", req.Username!), ("UserID", "001") },
+                      claims: GetUserClaims(user),
                       roles: new[] { "Admin", "Management" },
                       permissions: new[] { "ManageInventory", "ManageUsers" });
 
@@ -62,6 +66,25 @@ namespace WebApi.Features.UserLogin
                     Token = jwtToken,
                 }
             };
+        }
+
+        private static (string, string)[] GetUserClaims(User user)
+        {
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
+            {
+                { "UserId", user.Id.ToString() },
+                { "Username", user.Email }
+            };
+
+
+            // TODO: Revisit this idea... I think it could be a problem when the tokens change.
+            //foreach (var externalServiceUser in user.ExternalServiceUsers)
+            //{
+            //    keyValuePairs.Add($"{externalServiceUser.ExternalService.Name}UserId", externalServiceUser.ClientId);
+            //    keyValuePairs.Add($"{externalServiceUser.ExternalService.Name}AccessToken", externalServiceUser.AccessToken.Value);
+            //}
+
+            return keyValuePairs.Select(kv => (kv.Key, kv.Value)).ToArray();
         }
     }
 }
