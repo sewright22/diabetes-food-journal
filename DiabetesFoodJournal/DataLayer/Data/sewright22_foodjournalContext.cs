@@ -196,12 +196,16 @@ namespace DataLayer.Data
             {
                 entity.ToTable($"{nameof(Token)}");
                 entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.HasOne(x => x.TokenType);
             });
 
             modelBuilder.Entity<TokenType>(entity =>
             {
                 entity.ToTable($"{nameof(TokenType)}");
                 entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.HasData(new[] { new TokenType { Id = 1, Name = "Refresh" }, new TokenType { Id = 2, Name = "Access" } });
             });
 
             modelBuilder.Entity<User>(entity =>

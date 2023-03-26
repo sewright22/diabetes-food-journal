@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int ExternalServiceId { get; set; }
         public int UserId { get; set; }
+        public string? ClientId { get; set; }
         public string? State { get; set; }
         public DateTimeOffset? ExternalTokenExpiration { get; set; }
         public virtual Token? AccessToken { get; set; } = null!;

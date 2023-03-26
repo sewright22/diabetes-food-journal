@@ -42,11 +42,13 @@ namespace Services.External
             return fitBitToken;
         }
 
-        public async Task<string> GetProfile(string token, string userId)
+        public async Task<string> GetClientId(string token, string userId)
         {
             this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await this.HttpClient.GetAsync($"https://api.fitbit.com/1/user/{userId}/profile.json");
-            return await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync();
+            var fitBitProfile = Newtonsoft.Json.JsonConvert.DeserializeObject<FitbitProfile>(json);
+            return fitBitProfile.User.EncodedId;
         }
     }
 
