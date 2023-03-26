@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Responses;
 using Newtonsoft.Json;
 
 namespace Services.External
@@ -49,6 +50,16 @@ namespace Services.External
             var json = await response.Content.ReadAsStringAsync();
             var fitBitProfile = Newtonsoft.Json.JsonConvert.DeserializeObject<FitbitProfile>(json);
             return fitBitProfile.User.EncodedId;
+        }
+
+        public async Task<FoodLogResponse> GetFoodLog(string token, string userId, DateTime dateTime)
+        {
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var foodLogUrl = $"https://api.fitbit.com/1/user/{userId}/foods/log/date/{dateTime.ToString("yyyy-MM-dd")}.json";
+            var response = await this.HttpClient.GetAsync(foodLogUrl);
+            var json = await response.Content.ReadAsStringAsync();
+            var foodLog = Newtonsoft.Json.JsonConvert.DeserializeObject<FoodLogResponse>(json);
+            return foodLog;
         }
     }
 

@@ -27,9 +27,9 @@ namespace WebApi.Features.Fitbit
 
         public override Task HandleAsync(CancellationToken ct)
         {
-            var test = this.User;
+            var currentUser = this.User;
 
-            var userId = test.Claims.FirstOrDefault(x => x.Type == "UserID");
+            var userId = currentUser.Claims.FirstOrDefault(x => x.Type == "UserID");
 
             string state = GenerateRandomState();
 
