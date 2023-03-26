@@ -1,9 +1,31 @@
-﻿@page "/"
+﻿@page "/home"
+@using Services;
 
-<h1>Hello, world!</h1>
+<div class="d-grid g-2">
+    <button type="button" class="btn btn-primary" @onclick=LogFoodClicked>Log Food</button>
+    <button type="button" class="btn btn-primary mt-2" @onclick=SearchJournal>Search Journal</button>
+    <button type="button" class="btn btn-primary mt-2" @onclick=LinkFitbitClicked>Link Fitbit</button>
+    <a target="_blank" href="@fitbitLink">Fitbit</a>
+</div>
 
-Welcome to your new app.
+@code {
+    @inject NavigationManager navManager
+    @inject IDiabetesDataService diabetesService
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    string fitbitLink = "";
 
-<JournalEntries Title="Recent Entries" />
+    private async Task LogFoodClicked()
+    {
+        navManager.NavigateTo("/logfood", true);
+    }
+
+    private async Task SearchJournal()
+    {
+        navManager.NavigateTo("/searchjournal", true);
+    }
+
+    private async Task LinkFitbitClicked()
+    {
+        fitbitLink = await diabetesService.GetFitbitLink(AppState.BearerToken);
+    }
+}

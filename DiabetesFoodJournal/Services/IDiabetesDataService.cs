@@ -10,5 +10,6 @@ namespace Services
     public interface IDiabetesDataService
     {
         public Task<LoginResponse> Login(string username, string password);
+        public Task<string> GetFitbitLink(string token);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,20 @@ namespace FoodJournal.UI.Data
         }
 
         public HttpClient HttpClient { get; }
+
+        public Task<string> GetFitbitLink(string token)
+        {
+            try
+            {
+                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                return HttpClient.GetStringAsync("api/fitbit/link");
+            }
+            catch (Exception ex)
+            {
+                var test = ex.ToString();
+                return Task.FromResult("google.com");
+            }
+        }
 
         public Task<LoginResponse> Login(string username, string password)
         {
@@ -42,5 +57,7 @@ namespace FoodJournal.UI.Data
                     }
                 }).Unwrap();
         }
+
+
     }
 }
