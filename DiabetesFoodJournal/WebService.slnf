@@ -1,0 +1,20 @@
+{
+  "solution": {
+    "path": "DiabetesFoodJournal.sln",
+    "projects": [
+      "Business\\Business.csproj",
+      "Core\\Core.csproj",
+      "DataLayer\\DataLayer.csproj",
+      "ExtensionsTests\\ExtensionsTests.csproj",
+      "Extensions\\Extensions.csproj",
+      "Migrations\\Migrations.csproj",
+      "Services.EfCore.Tests.UnitTests\\Services.EfCore.Tests.UnitTests.csproj",
+      "Services.EfCore\\Services.EfCore.csproj",
+      "Services.ExternalTests\\Services.ExternalTests.csproj",
+      "Services.External\\Services.External.csproj",
+      "Services\\Services.csproj",
+      "WebApi.Tests.UnitTests\\WebApi.Tests.UnitTests.csproj",
+      "WebApi\\WebApi.csproj"
+    ]
+  }
+}
